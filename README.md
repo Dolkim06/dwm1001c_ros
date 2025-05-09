@@ -1,4 +1,4 @@
-# DWM1001c ROS topic으로 받아오는 패키지
+# DWM1001c ROS topic 생성 패키지
 
 원본 출처: https://github.com/bstarbuck3/mdek_driver
 
