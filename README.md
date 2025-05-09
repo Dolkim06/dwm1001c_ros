@@ -1,3 +1,5 @@
+DWM1001c ROS topic으로 받아오는 패키지
+
 원본 출처: https://github.com/bstarbuck3/mdek_driver
 
 테스트 환경: ubuntu 20.04LTS, ros noetic 
