@@ -4,17 +4,14 @@ import rospy
 import serial, time, os
 from serial import SerialException
 from mdek_driver.msg import UWB
-from geometry_msgs.msg import Point
+
 
 class Ranges:
     def __init__(self):
         rospy.init_node('mdek_driver')
 
-        # 거리 및 위치 토픽 발행
-        self.rangePub = rospy.Publisher("/ranges", UWB, queue_size=10)
-        self.tagPosPub = rospy.Publisher("/tag_position", Point, queue_size=10)
+        self.rangePub = rospy.Publisher("/r3/ranges", UWB, queue_size=10)
 
-        # 사용자 정의 앵커 ID 순서 (문자열로)
         self.custom_anchor_id_order = ["4395", "5981", "0029", "5517"]
 
         dwPort = rospy.get_param('~port', '/dev/ttyACM0')
@@ -59,7 +56,6 @@ class Ranges:
                                         anchor_id = parts[i + 1]
                                         distance = float(parts[i + 5])     # 거리값
                                         distances_by_id[anchor_id] = distance
-                                        #rospy.loginfo(f"Anchor {anchor_id} → Distance: {distance}")
                                     except (IndexError, ValueError):
                                         rospy.logwarn(f"Invalid anchor data block: {parts[i:i+6]}")
 
@@ -77,20 +73,7 @@ class Ranges:
                             msg.header.stamp = rospy.get_rostime()
                             self.rangePub.publish(msg)
 
-                            # 태그 위치값(POS) 처리
-                            if "POS" in parts:
-                                try:
-                                    pos_index = parts.index("POS")
-                                    tag_x = float(parts[pos_index + 1])
-                                    tag_y = float(parts[pos_index + 2])
-                                    tag_z = float(parts[pos_index + 3])
-                                    tag_position = Point(x=tag_x, y=tag_y, z=tag_z)
-                                    self.tagPosPub.publish(tag_position)
-                                    rospy.loginfo(f"Tag Position: x={tag_x}, y={tag_y}, z={tag_z}")
-                                    
-                                except (IndexError, ValueError):
-                                    rospy.logwarn("Invalid POS data block")
-                                   
+
                             print("-"*70)
 
                         except Exception as e:
